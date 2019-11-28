@@ -31,7 +31,7 @@ public class PostController {
     }
 
     @GetMapping("/{username}")
-    public Iterable<Post> getAllPostById(@RequestHeader("username") String username) {
+    public Iterable<Post> getAllPostByUsername(@RequestHeader("username") String username) {
         return postService.getAllPostsByUsername(username);
     }
     @GetMapping("/comment/{postId}")
@@ -47,7 +47,7 @@ public class PostController {
 
 
     @DeleteMapping("/{postId}")
-    public void deletePostbyId(@PathVariable Long postId) {
+    public Long deletePostbyId(@PathVariable Long postId) {
         postService.deletePostbyId(postId);
     }
 
@@ -66,7 +66,7 @@ public class PostController {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(BlankPostException err){
-        ErrorResponse error = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), err.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), err.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
