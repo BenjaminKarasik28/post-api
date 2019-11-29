@@ -108,6 +108,72 @@ public class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(allPostsMapper));
     }
+    @Test
+    public void getPostById_Post_Success() throws Exception{
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/post/" + post.getId())
+                .header("username", "user1");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String postMapper = objectMapper.writeValueAsString(post);
+        when(postService.getPostById(anyLong())).thenReturn(java.util.Optional.ofNullable(post));
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().string((postMapper)));
+
+    }
+    @Test
+    public void deletePostById_Post_Success() throws Exception{
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/" + post.getId())
+                .header("username", "user1");
+        when(postService.deletePostbyId(anyLong())).thenReturn(1L);
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"));
+    }
+
+    @Test
+    public void deletePostByUsername_Post_Success() throws Exception{
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/post/" + post.getUsername())
+                .header("username", "user1");
+        when(postService.deletePostByUsername(anyString())).thenReturn(post.getUsername());
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().string("Batman"));
+    }
+
+    @Test
+    public void updatePost_Post_Success() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/post/" + post.getId())
+                .header("username", "user1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"title\"}");
+
+        when(postService.updatePost(any(), anyLong())).thenReturn(post);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"title\":\"title\"}"))
+                .andReturn();
+
+    }
+
+    @Test
+    public void sendPostIdRestTemplate_Post_Success() throws Exception{
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/user/" + post.getId());
+        when(postService.sendPostIdRestTemplate(anyLong())).thenReturn("username");
+
+         mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().string("username"))
+                .andReturn();
+    }
+
+
+
 
     private static String createPostInJson(String title, String desc) {
         return "{ \"title\": \"" + title + "\", " + "\"description\":\"" + desc  +"\" }";
