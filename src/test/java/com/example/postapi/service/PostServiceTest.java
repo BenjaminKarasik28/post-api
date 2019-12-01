@@ -1,5 +1,6 @@
 package com.example.postapi.service;
 
+import com.example.postapi.exceptionhandling.BlankPostException;
 import com.example.postapi.model.DummyComment;
 import com.example.postapi.model.Post;
 import com.example.postapi.model.PostComment;
@@ -129,5 +130,11 @@ public class PostServiceTest {
         assertNotNull(username2);
     }
 
+    @Test(expected = BlankPostException.class)
+    public void createBlankPost_Status_ERROR() throws BlankPostException {
 
+        post.setTitle("");
+        Post newPost = postService.createPost(post, "batman");
+        when(postRepository.save(newPost)).thenReturn(newPost);
+    }
 }
